@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import connectDB from './config/db';
-import { socialLogin } from './controllers/AuthController';
+import authRouter from './routes/authRouts';
 
 dotenv.config();
 const app = express();
@@ -20,6 +20,6 @@ const initializeServer = async () => {
    }
 };
 
-app.post('/login', socialLogin);
+app.use('/auth', authRouter);
 
 initializeServer();
