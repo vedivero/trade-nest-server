@@ -1,7 +1,8 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import connectDB from './config/db';
-import authRouter from './routes/authRouts';
+import AuthRouter from './routes/AuthRouts';
+import ProductRouter from './routes/ProductRouts';
 
 dotenv.config();
 const app = express();
@@ -20,6 +21,7 @@ const initializeServer = async () => {
    }
 };
 
-app.use('/auth', authRouter);
+app.use('/auth', AuthRouter);
+app.use('/product', ProductRouter);
 
 initializeServer();
