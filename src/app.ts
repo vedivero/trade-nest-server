@@ -3,12 +3,21 @@ import express from 'express';
 import connectDB from './config/db';
 import AuthRouter from './routes/AuthRouts';
 import ProductRouter from './routes/ProductRouts';
+import cors from 'cors';
 
 dotenv.config();
 const app = express();
-app.use(express.json());
-
 const PORT = process.env.PORT;
+
+app.use(express.json());
+app.use(
+   cors({
+      origin: process.env.CLIENT_URL,
+      methods: 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+      allowedHeaders: 'Authorization, Content-Type, accessToken, refreshToken ',
+      credentials: true,
+   }),
+);
 
 const initializeServer = async () => {
    try {
