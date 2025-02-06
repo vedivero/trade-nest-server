@@ -12,17 +12,26 @@
    "license": "ISC",
    "description": "",
    "dependencies": {
+      "@types/bcrypt": "^5.0.2",
+      "bcrypt": "^5.1.1",
       "cors": "^2.8.5",
       "dotenv": "^16.4.7",
       "express": "^4.21.2",
       "http-status": "^2.1.0",
+<<<<<<< Updated upstream
       "mongoose": "^8.9.5"
+=======
+      "jsonwebtoken": "^9.0.2",
+      "mongoose": "^8.9.5",
+      "nodemailer": "^6.10.0"
+>>>>>>> Stashed changes
    },
    "devDependencies": {
       "@types/express": "^5.0.0",
       "@types/http-status": "^1.1.2",
       "@types/mongoose": "^5.11.97",
       "@types/node": "^22.12.0",
+      "@types/nodemailer": "^6.4.17",
       "eslint": "^9.19.0",
       "eslint-config-prettier": "^10.0.1",
       "eslint-plugin-prettier": "^5.2.3",

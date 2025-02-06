@@ -1,5 +1,14 @@
 import User, { IUser } from '../Model/User';
 
+export const findUserByEmail = async (email: string): Promise<IUser | null> => {
+   try {
+      return await User.findOne({ email });
+   } catch (error) {
+      console.error('❌ 사용자 이메일 조회 중 오류 발생:', error);
+      throw new Error('사용자 조회 실패');
+   }
+};
+
 export const findUserBySocialId = async (
    social_id: string,
    social_provider: string,

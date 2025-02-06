@@ -6,8 +6,19 @@ import authRouter from './routes/authRouts';
 dotenv.config();
 const app = express();
 app.use(express.json());
+<<<<<<< Updated upstream
 
 const PORT = process.env.PORT;
+=======
+app.use(
+   cors({
+      origin: process.env.FRONTEND_URL,
+      methods: 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+      allowedHeaders: 'Authorization, Content-Type, accessToken, refreshToken ',
+      credentials: true,
+   }),
+);
+>>>>>>> Stashed changes
 
 const initializeServer = async () => {
    try {
