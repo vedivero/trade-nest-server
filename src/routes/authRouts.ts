@@ -1,8 +1,11 @@
 import express from 'express';
-import { socialLogin } from '../controllers/AuthController';
+import { emailLogin, emailSignUp, socialLogin, verifyEmail } from '../controllers/AuthController';
 
 const router = express.Router();
 
-router.post('/login', socialLogin);
+router.post('/signup', emailSignUp);
+router.get('/verify-email', verifyEmail);
+router.post('/login', emailLogin);
+router.post('/social-login', socialLogin);
 
 export default router;

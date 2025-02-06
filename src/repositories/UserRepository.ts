@@ -31,7 +31,7 @@ export const updateUserVerification = async (token: string): Promise<boolean> =>
       }
 
       user.verified = true;
-      user.emailToken = '';
+      user.emailToken = 'Verification completed';
       await user.save();
 
       return true;
