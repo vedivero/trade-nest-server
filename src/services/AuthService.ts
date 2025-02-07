@@ -1,10 +1,5 @@
 import { IUser } from '../Model/User';
-import {
-   createUser,
-   findUserByEmail,
-   findUserBySocialId,
-   updateUserVerification,
-} from '../repositories/UserRepository';
+import { createUser, findUserByEmail, updateUserVerification } from '../repositories/UserRepository';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
@@ -12,33 +7,6 @@ import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 
 dotenv.config();
-
-interface SocialLoginData {
-   social_id: string;
-   social_provider: string;
-   email?: string;
-   nickname: string;
-   profile_image?: string;
-}
-
-export const handleSocialLogin = async (loginData: SocialLoginData): Promise<IUser> => {
-   const { social_id, social_provider } = loginData;
-
-   try {
-      let user = await findUserBySocialId(social_id, social_provider);
-
-      if (!user) {
-         user = await createUser({
-            user_id: `user_${Date.now()}`,
-            ...loginData,
-         });
-      }
-      return user;
-   } catch (error) {
-      console.error('❌ 소셜 로그인 처리 중 오류 발생:', error);
-      throw new Error('소셜 로그인 처리 실패');
-   }
-};
 
 export const generateTokens = (user: IUser) => {
    const payload = {
@@ -50,7 +18,7 @@ export const generateTokens = (user: IUser) => {
    const refreshSecret = process.env.JWT_REFRESH_SECRET_KEY || '';
 
    if (!accessSecret || !refreshSecret) {
-      throw new Error('JWT 비밀키가 설정되지 않았습니다.');
+      throw new Error('JWT 비밀키가 설정되지 않았습니다. .env파일을 확인해 주세요.');
    }
 
    const accessToken = jwt.sign(payload, accessSecret, { expiresIn: '1h' });

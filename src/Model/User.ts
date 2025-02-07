@@ -5,7 +5,7 @@ export interface IUser extends Document {
    social_id: string; // 소셜 로그인 ID
    social_provider: string; // 소셜 로그인 제공자 (naver, kakao, google)
    email: string; // 이메일 (선택적)
-   password: string; // 비밀번호호
+   password: string; // 비밀번호
    nickname: string; // 사용자 닉네임
    profile_image: string; // 프로필 이미지 URL
    reg_date: Date; // 가입 날짜
@@ -22,7 +22,7 @@ const UserSchema: Schema<IUserDocument> = new Schema<IUser>({
    social_id: { type: String, required: true }, // 소셜 로그인 ID
    social_provider: { type: String, required: true }, // 소셜 로그인 제공자
    email: { type: String }, // 이메일 (선택적)
-   password: { type: String, required: true }, // 비밀번호
+   password: { type: String }, // 비밀번호
    nickname: { type: String, required: true }, // 사용자 닉네임
    profile_image: { type: String }, // 프로필 이미지 URL
    reg_date: { type: Date, default: Date.now }, // 가입 날짜 (기본값: 현재 시간)
