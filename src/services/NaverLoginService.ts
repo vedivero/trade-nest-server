@@ -1,9 +1,11 @@
+import { Request } from 'express';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import axios from 'axios';
-import { findOrCreateUser } from '../repositories/NaverLoginRepository';
 import dotenv from 'dotenv';
+import { findOrCreateUser, findUserById } from '../repositories/NaverLoginRepository';
 dotenv.config();
 
-export class SocialAuthService {
+export class NaverSocialAuthService {
    // 네이버 로그인 URL 생성
    static getNaverAuthUrl(): string {
       const clientId = process.env.NAVER_CLIENT_ID || '';
@@ -29,10 +31,23 @@ export class SocialAuthService {
          });
 
          // 유저 정보 저장 및 반환
-         return findOrCreateUser('naver', userInfoResponse.data);
+         const user = await findOrCreateUser('naver', userInfoResponse.data);
+         return user;
       } catch (error) {
          console.error('네이버 로그인 처리 중 오류:', error);
          throw new Error('네이버 로그인 처리 중 오류 발생');
+      }
+   }
+
+   static async getUserFromToken(req: Request) {
+      const token = req.cookies.accessToken;
+      if (!token) throw new Error('토큰 없음');
+
+      try {
+         const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET_KEY as string) as JwtPayload;
+         return findUserById(decoded.id);
+      } catch (error) {
+         throw new Error('유효하지 않은 토큰');
       }
    }
 }

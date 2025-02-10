@@ -10,19 +10,19 @@ export const createUser = async (userData: Partial<IUser>): Promise<IUser> => {
    }
 };
 
-export const updateUserVerification = async (token: string): Promise<boolean> => {
+export const updateUserVerification = async (token: string): Promise<IUser | null> => {
    try {
       const user = await User.findOne({ emailToken: token });
 
       if (!user || user.verified) {
-         return false;
+         return null;
       }
 
       user.verified = true;
       user.emailToken = 'Verification completed';
       await user.save();
 
-      return true;
+      return user;
    } catch (error) {
       console.error('❌ 이메일 인증 상태 업데이트 중 오류 발생:', error);
       throw new Error('이메일 인증 업데이트 실패');

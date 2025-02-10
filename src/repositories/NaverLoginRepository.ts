@@ -19,3 +19,11 @@ export const findOrCreateUser = async (provider: string, userInfo: any): Promise
 
    return user;
 };
+
+export const findUserById = async (id: string): Promise<IUser | null> => {
+   try {
+      return await User.findOne({ user_id: id }).exec();
+   } catch (error) {
+      return null;
+   }
+};
