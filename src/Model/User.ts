@@ -1,35 +1,85 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import { DataTypes, Model } from 'sequelize';
+import sequelize from '../config/database';
 
-export interface IUser extends Document {
-   user_id: string; // 사용자 고유 ID
-   social_id: string; // 소셜 로그인 ID
-   social_provider: string; // 소셜 로그인 제공자 (naver, kakao, google)
-   email: string; // 이메일 (선택적)
-   password: string; // 비밀번호
-   nickname: string; // 사용자 닉네임
-   profile_image: string; // 프로필 이미지 URL
-   reg_date: Date; // 가입 날짜
-   addr?: string; // 사용자 주소 (선택적)
-   rating?: number; // 사용자 평점 (선택적, 기본값 0)
-   verified: boolean; // 이메일 인증 여부
-   emailToken: string; // 이메일 인증 토큰
+class User extends Model {
+   public id!: number;
+   public user_id!: string;
+   public social_id!: string;
+   public social_provider!: string;
+   public email!: string;
+   public password!: string;
+   public nickname!: string;
+   public profile_image!: string;
+   public reg_date!: Date;
+   public addr?: string;
+   public rating!: number;
+   public verified!: boolean;
+   public emailToken!: string;
 }
 
-export interface IUserDocument extends IUser, Document {}
+User.init(
+   {
+      id: {
+         type: DataTypes.INTEGER,
+         autoIncrement: true,
+         primaryKey: true,
+      },
+      user_id: {
+         type: DataTypes.STRING,
+         unique: true,
+         allowNull: false,
+      },
+      social_id: {
+         type: DataTypes.STRING,
+         allowNull: false,
+      },
+      social_provider: {
+         type: DataTypes.STRING,
+         allowNull: false,
+      },
+      email: {
+         type: DataTypes.STRING,
+         unique: true,
+         allowNull: true,
+      },
+      password: {
+         type: DataTypes.STRING,
+         allowNull: true,
+      },
+      nickname: {
+         type: DataTypes.STRING,
+         allowNull: false,
+      },
+      profile_image: {
+         type: DataTypes.STRING,
+         allowNull: true,
+      },
+      reg_date: {
+         type: DataTypes.DATE,
+         defaultValue: DataTypes.NOW,
+      },
+      addr: {
+         type: DataTypes.STRING,
+         allowNull: true,
+      },
+      rating: {
+         type: DataTypes.FLOAT,
+         defaultValue: 0,
+      },
+      verified: {
+         type: DataTypes.BOOLEAN,
+         defaultValue: false,
+      },
+      emailToken: {
+         type: DataTypes.STRING,
+         allowNull: true,
+      },
+   },
+   {
+      sequelize,
+      tableName: 'users',
+      timestamps: false,
+   },
+);
 
-const UserSchema: Schema<IUserDocument> = new Schema<IUser>({
-   user_id: { type: String, required: true, unique: true }, // 사용자 고유 ID
-   social_id: { type: String, required: true }, // 소셜 로그인 ID
-   social_provider: { type: String, required: true }, // 소셜 로그인 제공자
-   email: { type: String }, // 이메일 (선택적)
-   password: { type: String }, // 비밀번호
-   nickname: { type: String, required: true }, // 사용자 닉네임
-   profile_image: { type: String }, // 프로필 이미지 URL
-   reg_date: { type: Date, default: Date.now }, // 가입 날짜 (기본값: 현재 시간)
-   addr: { type: String }, // 사용자 주소 (선택적)
-   rating: { type: Number, default: 0 }, // 사용자 평점 (기본값: 0)
-   verified: { type: Boolean, default: false }, // 이메일 인증 여부
-   emailToken: { type: String },
-});
-
-export default mongoose.model<IUser>('User', UserSchema);
+export default User;
