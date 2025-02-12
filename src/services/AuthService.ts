@@ -1,4 +1,4 @@
-import { IUser } from '../Model/User';
+import User from '../Model/User';
 import { createUser, findUserByEmail, updateUserVerification } from '../repositories/UserRepository';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
@@ -8,7 +8,7 @@ import crypto from 'crypto';
 
 dotenv.config();
 
-export const generateTokens = (user: IUser) => {
+export const generateTokens = (user: User) => {
    const payload = {
       user_id: user.user_id,
       social_provider: user.social_provider,
@@ -44,7 +44,8 @@ export const handleEmailSignUp = async ({
    password: string;
    nickname: string;
 }) => {
-   if (await findUserByEmail(email)) {
+   const existingUser = await findUserByEmail(email);
+   if (existingUser) {
       throw new Error('이미 가입된 이메일입니다.');
    }
 
@@ -75,7 +76,7 @@ export const handleEmailSignUp = async ({
    return userInfo;
 };
 
-export const verifyEmailToken = async (token: string): Promise<IUser | null> => {
+export const verifyEmailToken = async (token: string): Promise<User | null> => {
    return await updateUserVerification(token);
 };
 
@@ -89,7 +90,7 @@ export const handleEmailLogin = async ({ email, password }: { email: string; pas
    if (!isValidPassword) throw new Error('비밀번호가 일치하지 않습니다');
 
    // 토큰 생성
-   const token = await generateTokens(user);
+   const token = generateTokens(user);
 
    // tokens와 user를 반환
    return { token, user: { id: user.id, email: user.email, nickname: user.nickname } };

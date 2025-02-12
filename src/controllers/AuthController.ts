@@ -18,10 +18,8 @@ export const emailSignUp = async (req: Request, res: Response): Promise<void> =>
          message: '해당 이메일 주소로 인증 메일을 발송하였습니다. \n메일을 확인해 주세요.',
       });
    } catch (error: any) {
-      // any 타입으로 명시적으로 설정
       console.error('❌ 이메일 회원가입 중 오류 발생:', error);
 
-      // 에러 메시지가 존재하는지 확인 후 반환
       const errorMessage = error instanceof Error ? error.message : String(error);
 
       if (errorMessage === '이미 가입된 이메일입니다.') {
@@ -36,7 +34,6 @@ export const emailSignUp = async (req: Request, res: Response): Promise<void> =>
    }
 };
 
-// AuthController.ts
 export const verifyEmail = async (req: Request, res: Response): Promise<void> => {
    try {
       const emailToken = req.query.token;
