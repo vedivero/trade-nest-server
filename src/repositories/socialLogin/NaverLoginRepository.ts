@@ -1,4 +1,4 @@
-import User from '../Model/User'; // Sequelize 모델
+import User from '../../Model/User';
 
 export const findOrCreateUser = async (provider: string, userInfo: any): Promise<User> => {
    const { id, email, nickname } = userInfo.response || userInfo;
@@ -10,8 +10,8 @@ export const findOrCreateUser = async (provider: string, userInfo: any): Promise
          user_id: `user_${Date.now()}`,
          social_id: id,
          social_provider: provider,
-         email: email || '',
-         nickname: nickname || '',
+         email: email,
+         nickname: nickname,
          verified: true,
       });
    }

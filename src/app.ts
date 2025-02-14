@@ -35,6 +35,10 @@ const initializeServer = async () => {
       console.error('❌ Failed to start server:', error);
    }
 };
+app.use((req, res, next) => {
+   console.log(`📢 [요청 감지] ${req.method} ${req.path}`);
+   next();
+});
 
 app.use('/auth', AuthRouter);
 app.use('/socialLogin', SocialRoutes);
