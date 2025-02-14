@@ -1,38 +1,36 @@
 import axios from 'axios';
-import { KakaoAuthRepository } from '../../repositories/socialLogin/KakaoLoginRepository';
+import { findOrCreateUser } from '../../repositories/socialLogin/SocialLoginRepository';
+import { normalizeUserInfo } from '../../utils/normalizeSocialUser';
+import dotenv from 'dotenv';
+dotenv.config();
 
 export class KakaoAuthService {
    static getKakaoAuthUrl(): string {
+      console.log('카카오 로그인');
       return `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.KAKAO_CLIENT_ID}&redirect_uri=${process.env.KAKAO_REDIRECT_URI}&response_type=code`;
    }
 
    static async handleKakaoCallback(code: string) {
       const tokenUrl = 'https://kauth.kakao.com/oauth/token';
-      const userUrl = 'https://kapi.kakao.com/v2/user/me';
+      const tokenResponse = await axios.post(tokenUrl, null, {
+         params: {
+            grant_type: 'authorization_code',
+            client_id: process.env.KAKAO_CLIENT_ID,
+            client_secret: process.env.KAKAO_CLIENT_SECRET,
+            redirect_uri: `${process.env.BACKEND_URL}/socialLogin/kakao/callback`,
+            code,
+         },
+      });
 
-      try {
-         const tokenResponse = await axios.post(tokenUrl, null, {
-            params: {
-               grant_type: 'authorization_code',
-               client_id: process.env.KAKAO_CLIENT_ID,
-               ...(process.env.KAKAO_CLIENT_SECRET ? { client_secret: process.env.KAKAO_CLIENT_SECRET } : {}),
-               redirect_uri: process.env.KAKAO_REDIRECT_URI,
-               code,
-            },
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-         });
+      const { access_token } = tokenResponse.data;
 
-         const accessToken = tokenResponse.data.access_token;
+      const userInfoUrl = 'https://kapi.kakao.com/v2/user/me';
+      const userInfoResponse = await axios.get(userInfoUrl, {
+         headers: { Authorization: `Bearer ${access_token}` },
+      });
 
-         const userResponse = await axios.get(userUrl, {
-            headers: { Authorization: `Bearer ${accessToken}` },
-         });
+      const normalizedUser = normalizeUserInfo('kakao', userInfoResponse.data);
 
-         const userProfile = userResponse.data;
-         return await KakaoAuthRepository.findOrCreateUser('kakao', userProfile);
-      } catch (error) {
-         console.error('❌ 카카오 로그인 요청 실패 ', error);
-         throw new Error('카카오 로그인 요청 실패');
-      }
+      return await findOrCreateUser('kakao', normalizedUser);
    }
 }

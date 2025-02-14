@@ -45,6 +45,7 @@ export class KakaoAuthController {
 
          res.redirect(`${process.env.FRONTEND_URL}/`);
       } catch (error) {
+         console.log('kakaoCallback Efrror : ', error);
          res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: '카카오 로그인 실패' });
       }
    }
