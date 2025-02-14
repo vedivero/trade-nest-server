@@ -2,7 +2,8 @@ import { Request } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import axios from 'axios';
 import dotenv from 'dotenv';
-import { findOrCreateUser, findUserById } from '../../repositories/socialLogin/NaverLoginRepository';
+import { findOrCreateUser, findUserById_naver } from '../../repositories/socialLogin/SocialLoginRepository';
+import { normalizeUserInfo } from '../../utils/normalizeSocialUser';
 dotenv.config();
 
 export class NaverSocialAuthService {
@@ -14,26 +15,26 @@ export class NaverSocialAuthService {
    }
 
    static async handleNaverCallback(code: string, state: string) {
-      const clientId = process.env.NAVER_CLIENT_ID || '';
-      const clientSecret = process.env.NAVER_CLIENT_SECRET || '';
-      const redirectUri = `${process.env.BACKEND_URL}/socialLogin/naver/callback`;
+      const tokenUrl = `https://nid.naver.com/oauth2.0/token`;
+      const tokenResponse = await axios.get(tokenUrl, {
+         params: {
+            grant_type: 'authorization_code',
+            client_id: process.env.NAVER_CLIENT_ID,
+            client_secret: process.env.NAVER_CLIENT_SECRET,
+            redirect_uri: process.env.BACKEND_URL,
+            code,
+            state,
+         },
+      });
+      const { access_token } = tokenResponse.data;
 
-      try {
-         const tokenUrl = `https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&client_id=${clientId}&client_secret=${clientSecret}&redirect_uri=${redirectUri}&code=${code}&state=${state}`;
-         const tokenResponse = await axios.get(tokenUrl);
-         const { access_token } = tokenResponse.data;
-
-         const userInfoUrl = 'https://openapi.naver.com/v1/nid/me';
-         const userInfoResponse = await axios.get(userInfoUrl, {
-            headers: { Authorization: `Bearer ${access_token}` },
-         });
-
-         const user = await findOrCreateUser('naver', userInfoResponse.data);
-         return user;
-      } catch (error) {
-         console.error('네이버 로그인 처리 중 오류:', error);
-         throw new Error('네이버 로그인 처리 중 오류 발생');
-      }
+      const userInfoUrl = 'https://openapi.naver.com/v1/nid/me';
+      const userInfoResponse = await axios.get(userInfoUrl, {
+         headers: { Authorization: `Bearer ${access_token}` },
+      });
+      const normalizedUser = normalizeUserInfo('naver', userInfoResponse.data);
+      const user = await findOrCreateUser('naver', normalizedUser);
+      return user;
    }
 
    static async getUserFromToken(req: Request) {
@@ -42,7 +43,7 @@ export class NaverSocialAuthService {
 
       try {
          const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET_KEY as string) as JwtPayload;
-         return findUserById(decoded.id);
+         return findUserById_naver(decoded.id);
       } catch (error) {
          throw new Error('유효하지 않은 토큰');
       }
