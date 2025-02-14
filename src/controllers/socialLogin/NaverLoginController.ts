@@ -1,10 +1,9 @@
 import { Request, Response } from 'express';
-import { NaverSocialAuthService } from '../services/NaverLoginService';
+import { NaverSocialAuthService } from '../../services/socialLogin/NaverLoginService';
 import httpStatus from 'http-status';
 import jwt from 'jsonwebtoken';
 
-export class SocialAuthController {
-   // 네이버 로그인 URL 생성
+export class NaverAuthController {
    static async naverLogin(req: Request, res: Response): Promise<void> {
       try {
          const authUrl = NaverSocialAuthService.getNaverAuthUrl();
@@ -15,7 +14,6 @@ export class SocialAuthController {
       }
    }
 
-   // 네이버 로그인 콜백 처리
    static async naverCallback(req: Request, res: Response): Promise<void> {
       const { code, state } = req.query;
 

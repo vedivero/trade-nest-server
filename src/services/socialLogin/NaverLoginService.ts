@@ -2,11 +2,10 @@ import { Request } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import axios from 'axios';
 import dotenv from 'dotenv';
-import { findOrCreateUser, findUserById } from '../repositories/NaverLoginRepository';
+import { findOrCreateUser, findUserById } from '../../repositories/socialLogin/NaverLoginRepository';
 dotenv.config();
 
 export class NaverSocialAuthService {
-   // 네이버 로그인 URL 생성
    static getNaverAuthUrl(): string {
       const clientId = process.env.NAVER_CLIENT_ID || '';
       const redirectUri = encodeURIComponent(`${process.env.BACKEND_URL}/socialLogin/naver/callback`);
@@ -14,7 +13,6 @@ export class NaverSocialAuthService {
       return `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}`;
    }
 
-   // 네이버 콜백 처리
    static async handleNaverCallback(code: string, state: string) {
       const clientId = process.env.NAVER_CLIENT_ID || '';
       const clientSecret = process.env.NAVER_CLIENT_SECRET || '';
@@ -30,7 +28,6 @@ export class NaverSocialAuthService {
             headers: { Authorization: `Bearer ${access_token}` },
          });
 
-         // 유저 정보 저장 및 반환
          const user = await findOrCreateUser('naver', userInfoResponse.data);
          return user;
       } catch (error) {
