@@ -1,5 +1,10 @@
 import { Request, Response } from 'express';
-import { handleEmailLogin, handleEmailSignUp, verifyEmailToken } from '../services/AuthService';
+import {
+   checkUserForResetPassword,
+   handleEmailLogin,
+   handleEmailSignUp,
+   verifyEmailToken,
+} from '../services/AuthService';
 import httpStatus from 'http-status';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
@@ -139,6 +144,21 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
       console.error('❌ 로그아웃 중 오류 발생:', error);
       res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
          message: '로그아웃 실패',
+         error,
+      });
+   }
+};
+
+export const resetPassword = async (req: Request, res: Response): Promise<void> => {
+   try {
+      const { email } = req.body;
+
+      checkUserForResetPassword({ email });
+      res.status(httpStatus.OK).json({ message: '비밀번호 초기화 완료' });
+   } catch (error) {
+      console.error('❌ 로그아웃 중 오류 발생:', error);
+      res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+         message: '비밀번호 초기화 실패',
          error,
       });
    }
