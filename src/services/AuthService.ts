@@ -1,5 +1,10 @@
 import User from '../Model/User';
-import { createUser, findUserByEmail, updateUserVerification } from '../repositories/UserRepository';
+import {
+   createUser,
+   findUserByEmail,
+   sendNewPassword,
+   updateUserVerification,
+} from '../repositories/UserRepository';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
@@ -89,9 +94,22 @@ export const handleEmailLogin = async ({ email, password }: { email: string; pas
    const isValidPassword = await bcrypt.compare(password, user.password);
    if (!isValidPassword) throw new Error('비밀번호가 일치하지 않습니다');
 
-   // 토큰 생성
    const token = generateTokens(user);
 
-   // tokens와 user를 반환
    return { token, user: { id: user.id, email: user.email, nickname: user.nickname } };
+};
+
+export const checkUserForResetPassword = async ({ email }: { email: string }) => {
+   const result = await sendNewPassword(email);
+   if (result) {
+      const { user, newPassword } = result;
+      await transporter.sendMail({
+         from: process.env.EMAIL_ADDRESS,
+         to: email,
+         subject: '비밀번호 초기화',
+         html: `<p>변경된 새로운 비밀번호</p>
+               <p>${newPassword}</p>
+               <p>변경된 새로운 비밀번호로 로그인 해주세요.</p>`,
+      });
+   }
 };
