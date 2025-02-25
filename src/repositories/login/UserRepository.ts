@@ -1,4 +1,4 @@
-import User from '../Model/User';
+import User from '../../Model/User';
 import crypto from 'crypto';
 import bcrypt from 'bcrypt';
 

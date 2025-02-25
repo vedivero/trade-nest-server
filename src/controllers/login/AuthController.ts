@@ -4,7 +4,7 @@ import {
    handleEmailLogin,
    handleEmailSignUp,
    verifyEmailToken,
-} from '../services/AuthService';
+} from '../../services/login/AuthService';
 import httpStatus from 'http-status';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
