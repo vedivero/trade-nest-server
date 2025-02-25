@@ -1,10 +1,10 @@
 import express from 'express';
-import { getProducts, registProducts } from '../controllers/product/ProductController';
 import { verifyToken } from '../middleware/AuthMiddleware';
+import ProductController from '../controllers/product/ProductController';
 
 const router = express.Router();
 
-router.get('/products', getProducts);
-router.post('/regist', verifyToken, registProducts);
+router.get('/products', ProductController.getProducts);
+router.post('/regist', verifyToken, ProductController.registProducts);
 
 export default router;
