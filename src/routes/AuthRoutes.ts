@@ -1,5 +1,11 @@
 import express from 'express';
-import { emailLogin, emailSignUp, logout, resetPassword, verifyEmail } from '../controllers/AuthController';
+import {
+   emailLogin,
+   emailSignUp,
+   logout,
+   resetPassword,
+   verifyEmail,
+} from '../controllers/login/AuthController';
 
 const router = express.Router();
 

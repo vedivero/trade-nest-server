@@ -1,10 +1,10 @@
-import User from '../Model/User';
+import User from '../../Model/User';
 import {
    createUser,
    findUserByEmail,
    sendNewPassword,
    updateUserVerification,
-} from '../repositories/UserRepository';
+} from '../../repositories/login/UserRepository';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';

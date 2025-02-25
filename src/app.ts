@@ -4,6 +4,7 @@ import sequelize from './config/database';
 import AuthRouter from './routes/AuthRoutes';
 import SocialRoutes from './routes/SocialLoginRoutes';
 import ProductRouter from './routes/ProductRoutes';
+import PopularKeywordRouter from './routes/PopularKeywordRoutes';
 import cors from 'cors';
 
 dotenv.config();
@@ -39,5 +40,6 @@ const initializeServer = async () => {
 app.use('/auth', AuthRouter);
 app.use('/socialLogin', SocialRoutes);
 app.use('/product', ProductRouter);
+app.use('/popular-keyword', PopularKeywordRouter);
 
 initializeServer();
