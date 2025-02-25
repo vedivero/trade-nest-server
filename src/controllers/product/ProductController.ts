@@ -1,23 +1,34 @@
 import { Request, Response } from 'express';
 import httpStatus from 'http-status';
-import { getAllProducts, registProduct } from '../../services/product/ProductService';
+import ProductService from '../../services/product/ProductService';
 
-export const getProducts = async (req: Request, res: Response): Promise<void> => {
-   try {
-      const products = await getAllProducts();
-      res.status(httpStatus.OK).json({ message: '상품 조회 성공', products });
-   } catch (error) {
-      res.status(httpStatus.INTERNAL_SERVER_ERROR);
-      return;
+class ProductController {
+   /**
+    * ✅ 모든 상품 조회
+    */
+   async getProducts(req: Request, res: Response): Promise<void> {
+      try {
+         const products = await ProductService.getAllProducts();
+         res.status(httpStatus.OK).json({ message: '상품 조회 성공', products });
+      } catch (error) {
+         console.error('❌ 상품 조회 실패:', error);
+         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: '상품 조회 중 오류 발생' });
+      }
    }
-};
 
-export const registProducts = async (req: Request, res: Response): Promise<void> => {
-   try {
-      const productData = req.body;
-      const product = await registProduct(productData);
-      res.status(httpStatus.CREATED).json({ message: '상품 등록 성공', product });
-   } catch (error) {
-      res.status(httpStatus.INTERNAL_SERVER_ERROR);
+   /**
+    * ✅ 상품 등록
+    */
+   async registProducts(req: Request, res: Response): Promise<void> {
+      try {
+         const productData = req.body;
+         const product = await ProductService.registProduct(productData);
+         res.status(httpStatus.CREATED).json({ message: '상품 등록 성공', product });
+      } catch (error) {
+         console.error('❌ 상품 등록 실패:', error);
+         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: '상품 등록 중 오류 발생' });
+      }
    }
-};
+}
+
+export default new ProductController();
