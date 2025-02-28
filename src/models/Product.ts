@@ -1,12 +1,13 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
-import User from './User'; // User 모델 import
+import User from './User';
 
 class Product extends Model {
    public id!: number; // 상품 ID (Primary Key)
    public product_no!: string; // 상품 번호
    public product_nm!: string; // 상품 이름
    public product_price!: number; // 상품 가격
+   public product_category!: string; // 상품 가격
    public product_desc!: string; // 상품 상세 설명
    public product_condition!: string; // 상품 상태 (new, used, damaged)
    public product_img!: string; // 상품 이미지 URL
@@ -33,6 +34,7 @@ Product.init(
          type: DataTypes.STRING,
          allowNull: false,
          unique: true,
+         defaultValue: DataTypes.UUIDV4,
       },
       product_nm: {
          type: DataTypes.STRING,
@@ -40,6 +42,10 @@ Product.init(
       },
       product_price: {
          type: DataTypes.FLOAT,
+         allowNull: false,
+      },
+      product_category: {
+         type: DataTypes.STRING,
          allowNull: false,
       },
       product_desc: {
@@ -109,9 +115,5 @@ Product.init(
       timestamps: false,
    },
 );
-
-// User와 Product 관계 정의 (1:N)
-User.hasMany(Product, { foreignKey: 'seller_id', as: 'products' });
-Product.belongsTo(User, { foreignKey: 'seller_id', as: 'seller' });
 
 export default Product;

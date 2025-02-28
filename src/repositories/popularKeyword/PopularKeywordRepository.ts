@@ -1,4 +1,4 @@
-import PopularKeyword from '../../Model/PopularKeyword';
+import PopularKeyword from '../../models/PopularKeyword';
 
 class PopularKeywordRepository {
    /**

@@ -1,4 +1,4 @@
-import User from '../../Model/User';
+import User from '../../models/User';
 import {
    createUser,
    findUserByEmail,
@@ -96,7 +96,7 @@ export const handleEmailLogin = async ({ email, password }: { email: string; pas
 
    const token = generateTokens(user);
 
-   return { token, user: { id: user.id, email: user.email, nickname: user.nickname } };
+   return { token, user: { id: user.id, user_id: user.user_id, email: user.email, nickname: user.nickname } };
 };
 
 export const checkUserForResetPassword = async ({ email }: { email: string }) => {

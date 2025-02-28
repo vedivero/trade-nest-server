@@ -13,10 +13,12 @@
    "description": "",
    "dependencies": {
       "@types/bcrypt": "^5.0.2",
+      "@types/cookie-parser": "^1.4.8",
       "@types/nodemailer": "^6.4.17",
       "@types/sequelize": "^4.28.20",
       "axios": "^1.7.9",
       "bcrypt": "^5.1.1",
+      "cookie-parser": "^1.4.7",
       "cors": "^2.8.5",
       "dotenv": "^16.4.7",
       "express": "^4.21.2",
@@ -26,6 +28,7 @@
       "mongoose": "^8.9.5",
       "nodemailer": "^6.10.0",
       "pg": "^8.13.2",
+      "save-dev": "^0.0.1-security",
       "sequelize": "^6.37.5"
    },
    "devDependencies": {
