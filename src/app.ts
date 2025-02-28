@@ -5,6 +5,7 @@ import AuthRouter from './routes/AuthRoutes';
 import SocialRoutes from './routes/SocialLoginRoutes';
 import ProductRouter from './routes/ProductRoutes';
 import PopularKeywordRouter from './routes/PopularKeywordRoutes';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
 dotenv.config();
@@ -12,6 +13,9 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
 app.use(
    cors({
       origin: process.env.FRONTEND_URL,

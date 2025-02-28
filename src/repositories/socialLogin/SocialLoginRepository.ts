@@ -1,5 +1,5 @@
 // repositories/SocialLoginRepository.ts
-import User from '../../Model/User';
+import User from '../../models/User';
 import { SocialUserInfo } from '../../types/SocialUserInfo';
 
 export const findOrCreateUser = async (provider: string, userInfo: SocialUserInfo): Promise<User> => {

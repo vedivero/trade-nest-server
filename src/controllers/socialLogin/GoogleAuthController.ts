@@ -28,7 +28,7 @@ export class GoogleAuthController {
          const token = jwt.sign(
             { id: userInfo.id, email: userInfo.email },
             process.env.JWT_ACCESS_SECRET_KEY as string,
-            { expiresIn: parseInt(process.env.JWT_ACCESS_EXPIRATION || '3600', 10) },
+            { expiresIn: parseInt(process.env.JWT_ACCESS_EXPIRATION || '1h') },
          );
 
          res.cookie('accessToken', token, {

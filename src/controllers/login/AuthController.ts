@@ -59,7 +59,7 @@ export const verifyEmail = async (req: Request, res: Response): Promise<void> =>
       }
 
       const token = jwt.sign(
-         { id: user.id, email: user.email },
+         { id: user.id, user_id: user.user_id, email: user.email },
          process.env.JWT_ACCESS_SECRET_KEY as string,
          {
             expiresIn: parseInt(process.env.JWT_ACCESS_EXPIRATION || '1h'),
@@ -103,6 +103,7 @@ export const emailLogin = async (req: Request, res: Response): Promise<void> => 
 
       const filteredUser = {
          id: user.id,
+         user_id: user.user_id,
          email: user.email,
          nickname: user.nickname,
       };
