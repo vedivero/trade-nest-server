@@ -44,6 +44,6 @@ const initializeServer = async () => {
 app.use('/auth', AuthRouter);
 app.use('/socialLogin', SocialRoutes);
 app.use('/product', ProductRouter);
-app.use('/popular-keyword', PopularKeywordRouter);
+app.use('/keyword', PopularKeywordRouter);
 
 initializeServer();

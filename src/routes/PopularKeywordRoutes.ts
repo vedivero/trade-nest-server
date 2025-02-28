@@ -3,7 +3,8 @@ import PopularKeywordController from '../controllers/popularKeyword/PopularKeywo
 
 const router = Router();
 
-router.get('/', PopularKeywordController.saveKeyword);
-router.get('/popular', PopularKeywordController.getPopularKeywords);
+router.get('/saveKeyword', PopularKeywordController.saveKeyword);
+router.get('/getPopularKeywords', PopularKeywordController.getPopularKeywords);
+router.get('/searchProducts', PopularKeywordController.getProductsBySearchKeyword);
 
 export default router;

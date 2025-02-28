@@ -19,6 +19,13 @@ class PopularKeywordService {
    async getPopularKeywords() {
       return await PopularKeywordRepository.getPopularKeywords();
    }
+
+   /**
+    * 상품 키워드 검색 비즈니스 로직
+    */
+   async getProductsBySearchKeyword(keyword: string) {
+      return await PopularKeywordRepository.getProductsBySearchKeyword(keyword);
+   }
 }
 
 export default new PopularKeywordService();

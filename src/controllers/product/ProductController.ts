@@ -7,15 +7,15 @@ import { CustomJwtPayload } from '../../middleware/AuthMiddleware';
 class ProductController {
    /**
     * 모든 상품 조회
-    * @route GET /product/products?page=1&limit=10
+    * @route GET /product/products
     */
    async getProducts(req: Request, res: Response): Promise<void> {
       try {
          const userId = (req.user as JwtPayload & { id: number })?.id;
-         console.log('userId : ', userId);
+
          const products = await ProductService.getProducts();
-         const isFavoritedProducts = await ProductService.getFavoritedProducts(userId);
-         res.status(httpStatus.OK).json({ products, isFavoritedProducts });
+         const favoritedProducts = userId ? await ProductService.getFavoritedProducts(userId) : [];
+         res.status(httpStatus.OK).json({ products, favoritedProducts });
       } catch (error) {
          console.error('❌ 상품 조회 실패:', error);
          res.status(httpStatus.INTERNAL_SERVER_ERROR).json({

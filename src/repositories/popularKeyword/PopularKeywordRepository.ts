@@ -1,4 +1,6 @@
+import { Op, Sequelize } from 'sequelize';
 import PopularKeyword from '../../models/PopularKeyword';
+import Product from '../../models/Product';
 
 class PopularKeywordRepository {
    /**
@@ -19,7 +21,7 @@ class PopularKeywordRepository {
 
          return popularKeyword;
       } catch (error) {
-         console.error('❌ 인기 검색어 저장 오류:', error);
+         console.error('인기 검색어 저장 오류:', error);
          throw new Error('데이터베이스 처리 중 오류 발생');
       }
    }
@@ -34,8 +36,30 @@ class PopularKeywordRepository {
             limit: 10,
          });
       } catch (error) {
-         console.error('❌ 인기 검색어 조회 오류:', error);
+         console.error('인기 검색어 조회 오류:', error);
          throw new Error('인기 검색어를 불러오는 중 오류 발생');
+      }
+   }
+
+   /**
+    * 상품 키워드 DB 검색
+    */
+   async getProductsBySearchKeyword(keyword: string): Promise<Product[]> {
+      try {
+         const trimmedKeyword = keyword.trim();
+
+         const products = await Product.findAll({
+            where: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('product_nm')), {
+               [Op.like]: `%${trimmedKeyword.toLowerCase()}%`,
+            }),
+            order: [['product_reg_date', 'DESC']],
+            logging: console.log,
+         });
+
+         return products;
+      } catch (error) {
+         console.error('상품 검색 오류:', error);
+         throw new Error('상품 검색 오류 발생');
       }
    }
 }
