@@ -42,4 +42,7 @@ Favorite.init(
    },
 );
 
+Favorite.belongsTo(Product, { foreignKey: 'product_id' });
+Product.hasMany(Favorite, { foreignKey: 'product_id' });
+
 export default Favorite;

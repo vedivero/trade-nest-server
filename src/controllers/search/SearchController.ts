@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
-import PopularKeywordService from '../../services/popularKeyword/PopularKeywordService';
+import SearchService from '../../services/search/SearchService';
 import httpStatus from 'http-status';
+import { JwtPayload } from 'jsonwebtoken';
 
-class PopularKeywordController {
+class SearchController {
    /**
     * 검색어 저장 API (`GET /keyword?saveKeyword={keyword}`)
     */
@@ -14,7 +15,7 @@ class PopularKeywordController {
             return;
          }
 
-         const savedKeyword = await PopularKeywordService.saveKeyword(keyword);
+         const savedKeyword = await SearchService.saveKeyword(keyword);
          res.status(httpStatus.OK).json({ success: true, data: savedKeyword });
       } catch (error) {
          console.error('검색어 저장 실패:', error);
@@ -27,7 +28,7 @@ class PopularKeywordController {
     */
    getPopularKeywords = async (req: Request, res: Response): Promise<void> => {
       try {
-         const keywords = await PopularKeywordService.getPopularKeywords();
+         const keywords = await SearchService.getPopularKeywords();
          res.status(httpStatus.OK).json({ success: true, data: keywords });
       } catch (error) {
          console.error('인기 검색어 조회 실패:', error);
@@ -40,9 +41,18 @@ class PopularKeywordController {
     */
    getProductsBySearchKeyword = async (req: Request, res: Response): Promise<void> => {
       try {
+         const userId = (req.user as { id?: number })?.id || null;
          const { searchKeyword } = req.query as { searchKeyword: string };
-         const result = await PopularKeywordService.getProductsBySearchKeyword(searchKeyword);
-         res.status(httpStatus.OK).json({ data: result });
+
+         const { products, favoritedProductIds } = await SearchService.getProductsWithFavoriteStatus(
+            searchKeyword,
+            userId,
+         );
+
+         res.status(httpStatus.OK).json({
+            products,
+            favoritedProducts: favoritedProductIds,
+         });
       } catch (error) {
          console.error('상품 검색 실패:', error);
          res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message: '서버 오류 발생' });
@@ -50,4 +60,4 @@ class PopularKeywordController {
    };
 }
 
-export default new PopularKeywordController();
+export default new SearchController();

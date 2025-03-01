@@ -4,7 +4,7 @@ import sequelize from './config/database';
 import AuthRouter from './routes/AuthRoutes';
 import SocialRoutes from './routes/SocialLoginRoutes';
 import ProductRouter from './routes/ProductRoutes';
-import PopularKeywordRouter from './routes/PopularKeywordRoutes';
+import SearchRoutes from './routes/SearchRoutes';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
@@ -44,6 +44,6 @@ const initializeServer = async () => {
 app.use('/auth', AuthRouter);
 app.use('/socialLogin', SocialRoutes);
 app.use('/product', ProductRouter);
-app.use('/keyword', PopularKeywordRouter);
+app.use('/search', SearchRoutes);
 
 initializeServer();
