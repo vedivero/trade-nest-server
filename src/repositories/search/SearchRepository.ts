@@ -1,8 +1,14 @@
-import { Op, Sequelize } from 'sequelize';
+import { Op } from 'sequelize';
 import PopularKeyword from '../../models/PopularKeyword';
 import Product from '../../models/Product';
+import Favorite from '../../models/Favorite';
 
-class PopularKeywordRepository {
+interface ProductSearchResult {
+   products: Product[];
+   favoritedProductIds: number[];
+}
+
+class SearchRepositoryRepository {
    /**
     * 검색어를 저장하거나 검색 횟수를 증가시키는 메서드
     * @param keyword 검색어
@@ -44,24 +50,42 @@ class PopularKeywordRepository {
    /**
     * 상품 키워드 DB 검색
     */
-   async getProductsBySearchKeyword(keyword: string): Promise<Product[]> {
-      try {
-         const trimmedKeyword = keyword.trim();
 
-         const products = await Product.findAll({
-            where: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('product_nm')), {
-               [Op.like]: `%${trimmedKeyword.toLowerCase()}%`,
-            }),
-            order: [['product_reg_date', 'DESC']],
-            logging: console.log,
-         });
+   async findProductsWithFavoriteStatus(
+      searchKeyword: string,
+      userId: number | null,
+   ): Promise<ProductSearchResult> {
+      const products = await Product.findAll({
+         attributes: [
+            'id',
+            'product_nm',
+            'product_price',
+            'product_category',
+            [
+               Favorite.sequelize!.literal(`CASE WHEN "Favorites"."id" IS NOT NULL THEN true ELSE false END`),
+               'isFavorited',
+            ],
+         ],
+         include: [
+            {
+               model: Favorite,
+               attributes: [],
+               where: userId ? { user_id: userId } : {},
+               required: false,
+            },
+         ],
+         where: {
+            product_nm: { [Op.like]: `%${searchKeyword}%` },
+         },
+         raw: true,
+      });
 
-         return products;
-      } catch (error) {
-         console.error('상품 검색 오류:', error);
-         throw new Error('상품 검색 오류 발생');
-      }
+      const favoritedProductIds = products
+         .filter((product: any) => product.isFavorited)
+         .map((product: any) => product.id);
+
+      return { products, favoritedProductIds };
    }
 }
 
-export default new PopularKeywordRepository();
+export default new SearchRepositoryRepository();
