@@ -5,7 +5,7 @@ import { JwtPayload } from 'jsonwebtoken';
 
 class SearchController {
    /**
-    * 검색어 저장 API (`GET /keyword?saveKeyword={keyword}`)
+    * 검색어 저장 API (`GET /search/saveKeyword={keyword}`)
     */
    saveKeyword = async (req: Request, res: Response): Promise<void> => {
       try {
@@ -24,7 +24,7 @@ class SearchController {
    };
 
    /**
-    * 인기 검색어 조회 API (`GET /keyword/getPopularKeywords`)
+    * 인기 검색어 조회 API (`GET /search/getPopularKeywords`)
     */
    getPopularKeywords = async (req: Request, res: Response): Promise<void> => {
       try {
@@ -37,7 +37,7 @@ class SearchController {
    };
 
    /**
-    * 상품 키워드 검색 API (`GET /keyword/searchProducts={searchKeyword}`)
+    * 상품 키워드 검색 API (`GET /search/searchProducts={searchKeyword}`)
     */
    getProductsBySearchKeyword = async (req: Request, res: Response): Promise<void> => {
       try {
