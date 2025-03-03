@@ -12,7 +12,6 @@ class ProductController {
    async getProducts(req: Request, res: Response): Promise<void> {
       try {
          const userId = (req.user as JwtPayload & { id: number })?.id;
-
          const products = await ProductService.getProducts();
          const favoritedProducts = userId ? await ProductService.getFavoritedProducts(userId) : [];
          res.status(httpStatus.OK).json({ products, favoritedProducts });
@@ -33,7 +32,9 @@ class ProductController {
          const productData = req.body;
 
          const product = await ProductService.registProduct(productData);
-         res.status(httpStatus.CREATED).json({ message: '상품 등록 성공', product });
+         if (!res.headersSent) {
+            res.status(httpStatus.CREATED).json({ message: '상품 등록 성공', product });
+         }
       } catch (error) {
          console.error('❌ 상품 등록 실패:', error);
          res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: '상품 등록 중 오류 발생' });

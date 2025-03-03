@@ -48,43 +48,43 @@ class SearchRepositoryRepository {
    }
 
    /**
-    * 상품 키워드 DB 검색
+    * 검색어에 해당하는 상품 목록 조회
     */
-
-   async findProductsWithFavoriteStatus(
-      searchKeyword: string,
-      userId: number | null,
-   ): Promise<ProductSearchResult> {
-      const products = await Product.findAll({
-         attributes: [
-            'id',
-            'product_nm',
-            'product_price',
-            'product_category',
-            [
-               Favorite.sequelize!.literal(`CASE WHEN "Favorites"."id" IS NOT NULL THEN true ELSE false END`),
-               'isFavorited',
-            ],
-         ],
-         include: [
-            {
-               model: Favorite,
-               attributes: [],
-               where: userId ? { user_id: userId } : {},
-               required: false,
+   async findProductsBySearchKeyword(searchKeyword: string) {
+      try {
+         return await Product.findAll({
+            where: {
+               product_nm: { [Op.like]: `%${searchKeyword}%` },
             },
-         ],
-         where: {
-            product_nm: { [Op.like]: `%${searchKeyword}%` },
-         },
-         raw: true,
-      });
+            order: [['product_reg_date', 'DESC']],
+         });
+      } catch (error) {
+         console.error('❌ 오류 발생 - 검색어로 상품 조회:', error);
+         throw new Error('검색어로 상품 조회 실패');
+      }
+   }
 
-      const favoritedProductIds = products
-         .filter((product: any) => product.isFavorited)
-         .map((product: any) => product.id);
-
-      return { products, favoritedProductIds };
+   /**
+    * 검색어에 해당하는 찜한 상품 객체 조회
+    */
+   async findFavoritedProductsBySearchKeyword(searchKeyword: string, userId: number) {
+      try {
+         return await Favorite.findAll({
+            attributes: ['id', 'user_id', 'product_id'],
+            include: [
+               {
+                  model: Product,
+                  attributes: [],
+                  where: { product_nm: { [Op.like]: `%${searchKeyword}%` } },
+               },
+            ],
+            where: { user_id: userId },
+            raw: true,
+         });
+      } catch (error) {
+         console.error('❌ 오류 발생 - 검색어로 찜한 상품 조회:', error);
+         throw new Error('검색어로 찜한 상품 조회 실패');
+      }
    }
 }
 

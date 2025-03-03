@@ -12,13 +12,10 @@ export interface CustomJwtPayload extends JwtPayload {
 export const verifyToken = (req: Request, res: Response, next: NextFunction): void => {
    try {
       const userInfo = req.cookies?.userInfo ? JSON.parse(req.cookies.userInfo) : null;
-
       if (!userInfo || !userInfo.id) {
          res.status(httpStatus.UNAUTHORIZED).json({ message: '로그인이 필요합니다.' });
       }
-
       req.user = userInfo;
-
       next();
    } catch (error) {
       console.error('❌ 유효하지 않은 토큰입니다:', error);
