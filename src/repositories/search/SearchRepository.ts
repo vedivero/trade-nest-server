@@ -39,7 +39,7 @@ class SearchRepositoryRepository {
       try {
          return await PopularKeyword.findAll({
             order: [['search_count', 'DESC']],
-            limit: 10,
+            limit: 7,
          });
       } catch (error) {
          console.error('인기 검색어 조회 오류:', error);
