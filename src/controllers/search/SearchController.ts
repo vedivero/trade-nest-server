@@ -41,17 +41,17 @@ class SearchController {
     */
    getProductsBySearchKeyword = async (req: Request, res: Response): Promise<void> => {
       try {
-         const userId = (req.user as { id?: number })?.id || null;
+         const userId = (req.user as JwtPayload & { id: number })?.id;
          const { searchKeyword } = req.query as { searchKeyword: string };
 
-         const { products, favoritedProductIds } = await SearchService.getProductsWithFavoriteStatus(
-            searchKeyword,
-            userId,
-         );
+         const products = await SearchService.getProductsBySearchKeyword(searchKeyword);
+         const favoritedProducts = userId
+            ? await SearchService.getFavoritedProductsBySearchKeyword(searchKeyword, userId)
+            : [];
 
          res.status(httpStatus.OK).json({
             products,
-            favoritedProducts: favoritedProductIds,
+            favoritedProducts,
          });
       } catch (error) {
          console.error('상품 검색 실패:', error);

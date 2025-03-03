@@ -21,10 +21,26 @@ class SearchService {
    }
 
    /**
-    * 상품 키워드 검색 비즈니스 로직
+    * 검색어에 따른 상품 목록 조회
     */
-   async getProductsWithFavoriteStatus(searchKeyword: string, userId: number | null) {
-      return await SearchRepository.findProductsWithFavoriteStatus(searchKeyword, userId);
+   async getProductsBySearchKeyword(searchKeyword: string) {
+      const products = await SearchRepository.findProductsBySearchKeyword(searchKeyword);
+      return products.map((product) => product.toJSON());
+   }
+
+   /**
+    * 검색어에 따른 찜한 상품 객체 목록 조회
+    */
+   async getFavoritedProductsBySearchKeyword(searchKeyword: string, userId: number) {
+      const favoritedProducts = await SearchRepository.findFavoritedProductsBySearchKeyword(
+         searchKeyword,
+         userId,
+      );
+      return favoritedProducts.map((product) => ({
+         id: product.id,
+         user_id: product.user_id,
+         product_id: product.product_id,
+      }));
    }
 }
 
