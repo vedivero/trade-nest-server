@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import SearchService from '../../services/search/SearchService';
 import httpStatus from 'http-status';
-import { JwtPayload } from 'jsonwebtoken';
 
 class SearchController {
    /**
@@ -10,6 +9,7 @@ class SearchController {
    saveKeyword = async (req: Request, res: Response): Promise<void> => {
       try {
          const { keyword } = req.query;
+         console.log('검색한 키워드 : ', keyword);
          if (!keyword || typeof keyword !== 'string') {
             res.status(httpStatus.BAD_REQUEST).json({ success: false, message: '검색어가 필요합니다.' });
             return;
