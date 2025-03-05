@@ -15,6 +15,7 @@ class User extends Model {
    public rating!: number;
    public verified!: boolean;
    public emailToken!: string;
+   public location!: string;
 }
 
 User.init(
@@ -73,6 +74,9 @@ User.init(
       emailToken: {
          type: DataTypes.STRING,
          allowNull: true,
+      },
+      location: {
+         type: DataTypes.STRING,
       },
    },
    {
