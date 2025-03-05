@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import httpStatus from 'http-status';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import { JwtPayload } from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -12,6 +12,7 @@ export interface CustomJwtPayload extends JwtPayload {
 export const verifyToken = (req: Request, res: Response, next: NextFunction): void => {
    try {
       const userInfo = req.cookies?.userInfo ? JSON.parse(req.cookies.userInfo) : null;
+      console.log('Auth 미들웨어, 유저정보 : ', userInfo);
       if (!userInfo || !userInfo.id) {
          res.status(httpStatus.UNAUTHORIZED).json({ message: '로그인이 필요합니다.' });
       }
