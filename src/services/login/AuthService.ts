@@ -4,7 +4,7 @@ import {
    findUserByEmail,
    sendNewPassword,
    updateUserVerification,
-} from '../../repositories/login/UserRepository';
+} from '../../repositories/login/AuthRepository';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';

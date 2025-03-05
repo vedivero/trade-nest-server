@@ -3,8 +3,9 @@ import express from 'express';
 import sequelize from './config/database';
 import AuthRouter from './routes/AuthRoutes';
 import SocialRoutes from './routes/SocialLoginRoutes';
-import ProductRouter from './routes/ProductRoutes';
+import ProductRoutes from './routes/ProductRoutes';
 import SearchRoutes from './routes/SearchRoutes';
+import UserRoutes from './routes/UserRoutes';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
@@ -43,7 +44,8 @@ const initializeServer = async () => {
 
 app.use('/auth', AuthRouter);
 app.use('/socialLogin', SocialRoutes);
-app.use('/product', ProductRouter);
+app.use('/product', ProductRoutes);
 app.use('/search', SearchRoutes);
+app.use('/user', UserRoutes);
 
 initializeServer();
