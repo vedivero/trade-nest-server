@@ -12,7 +12,7 @@ export interface CustomJwtPayload extends JwtPayload {
 export const verifyToken = (req: Request, res: Response, next: NextFunction): void => {
    try {
       const userInfo = req.cookies?.userInfo ? JSON.parse(req.cookies.userInfo) : null;
-      console.log('Auth 미들웨어, 유저정보 : ', userInfo);
+      // console.log('Auth 미들웨어, 유저정보 : ', userInfo);
       if (!userInfo || !userInfo.id) {
          res.status(httpStatus.UNAUTHORIZED).json({ message: '로그인이 필요합니다.' });
       }
@@ -34,7 +34,7 @@ export const optionalVerifyToken = (req: Request, res: Response, next: NextFunct
       const userInfo = req.cookies?.userInfo ? JSON.parse(req.cookies.userInfo) : null;
 
       req.user = userInfo;
-      console.log('🔍 optionalVerifyToken 파싱된 유저 정보:', req.user);
+      // console.log('🔍 optionalVerifyToken 파싱된 유저 정보:', req.user);
 
       next();
    } catch (error) {
