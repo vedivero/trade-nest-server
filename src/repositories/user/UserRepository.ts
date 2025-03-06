@@ -13,9 +13,14 @@ class UserRepository {
       }
    }
 
-   async updateUserInfo(userId: number, password: string, location: string): Promise<void> {
+   async updateUserInfo(userId: number, password: string | undefined, location: string): Promise<void> {
       try {
-         await User.update({ password, location: location }, { where: { id: userId } });
+         const updateData: { password?: string; location: string } = { location };
+         if (password) {
+            updateData.password = password;
+         }
+
+         await User.update(updateData, { where: { id: userId } });
       } catch (error) {
          console.error('회원 정보 업데이트 실패 : ', error);
          throw new Error('회원 정보 업데이트 실패');
