@@ -94,6 +94,75 @@ class ProductRepository {
          });
       }
    }
+
+   /**
+    * 해당 회원의 전체 상품 조회
+    */
+   async findUserProducts(userId: number) {
+      try {
+         return await Product.findAll({
+            where: { seller_id: userId },
+            order: [['product_reg_date', 'DESC']],
+         });
+      } catch (error) {
+         console.error('❌ 회원의 전체 상품 조회 실패:', error);
+         throw new Error('회원의 전체 상품 조회 실패');
+      }
+   }
+
+   /**
+    * 해당 회원의 상태별 상품 조회
+    */
+   async findUserProductsByStatus(userId: number, status: string) {
+      try {
+         return await Product.findAll({
+            where: { seller_id: userId, trade_status: status },
+            order: [['product_reg_date', 'DESC']],
+         });
+      } catch (error) {
+         console.error(`❌ 회원의 ${status} 상태 상품 조회 실패:`, error);
+         throw new Error('회원의 상태별 상품 조회 실패');
+      }
+   }
+
+   /**
+    * 상품 ID로 상품 조회
+    */
+   async findProductById(productId: number): Promise<Product | null> {
+      try {
+         return await Product.findByPk(productId);
+      } catch (error) {
+         console.error('❌ 상품 조회 실패:', error);
+         throw new Error('상품 조회 중 오류가 발생했습니다.');
+      }
+   }
+
+   /**
+    * 상품 상태 업데이트 (판매중 / 판매중지)
+    */
+   async updateProductStatus(productId: number, status: 'available' | 'stopped'): Promise<void> {
+      try {
+         await Product.update({ trade_status: status }, { where: { id: productId } });
+      } catch (error) {
+         console.error('❌ 상품 상태 업데이트 실패:', error);
+         throw new Error('상품 상태 업데이트 중 오류가 발생했습니다.');
+      }
+   }
+
+   /**
+    * 상품 삭제
+    */
+   async deleteProduct(productId: number): Promise<void> {
+      try {
+         const result = await Product.destroy({ where: { id: productId } });
+         if (result === 0) {
+            throw new Error('삭제할 상품을 찾을 수 없습니다.');
+         }
+      } catch (error) {
+         console.error('❌ 상품 삭제 실패:', error);
+         throw new Error('상품 삭제 중 오류가 발생했습니다.');
+      }
+   }
 }
 
 export default new ProductRepository();
