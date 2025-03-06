@@ -101,6 +101,106 @@ class ProductController {
          res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: '찜 취소 실패' });
       }
    }
+
+   /**
+    * 마이페이지 - 해당 회원의 전체 상품 조회
+    * @route GET /mypage/products/all
+    */
+   async getUserProducts(req: Request, res: Response): Promise<void> {
+      try {
+         const userId = (req.user as JwtPayload & { id: number })?.id;
+         if (!userId) {
+            res.status(httpStatus.UNAUTHORIZED).json({
+               message: '로그인이 필요합니다.',
+            });
+         }
+
+         const products = await ProductService.getUserProducts(userId);
+         res.status(httpStatus.OK).json({ products });
+      } catch (error) {
+         console.error('❌ 회원의 전체 상품 조회 실패:', error);
+         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: '회원의 전체 상품 조회 중 오류 발생',
+         });
+      }
+   }
+
+   /**
+    * 마이페이지 - 해당 회원의 상태별 상품 조회
+    * @route GET /mypage/products/:status
+    */
+   async getUserProductsByStatus(req: Request, res: Response): Promise<void> {
+      try {
+         const userId = (req.user as JwtPayload & { id: number })?.id;
+         const status = req.params.status;
+
+         if (!userId) {
+            res.status(httpStatus.UNAUTHORIZED).json({
+               message: '로그인이 필요합니다.',
+            });
+         }
+
+         const validStatuses = ['available', 'reserved', 'completed'];
+         if (!validStatuses.includes(status)) {
+            res.status(httpStatus.BAD_REQUEST).json({
+               message: '잘못된 상태 값입니다.',
+            });
+         }
+
+         const products = await ProductService.getUserProductsByStatus(userId, status);
+         res.status(httpStatus.OK).json({ products });
+      } catch (error) {
+         console.error('❌ 회원의 상태별 상품 조회 실패:', error);
+         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: '회원의 상태별 상품 조회 중 오류 발생',
+         });
+      }
+   }
+
+   /**
+    * 상품 상태 업데이트 (판매중 / 판매중지)
+    * @route PATCH /product/mypage/product/:id/status
+    */
+   async updateProductStatus(req: Request, res: Response): Promise<void> {
+      try {
+         const { id } = req.params;
+         const { status } = req.body;
+
+         // 상태 값 검증
+         const allowedStatuses = ['available', 'stopped'];
+         if (!allowedStatuses.includes(status)) {
+            res.status(httpStatus.BAD_REQUEST).json({
+               message: `잘못된 상태값입니다. (${allowedStatuses.join(', ')} 중 하나여야 합니다.)`,
+            });
+         }
+
+         await ProductService.updateProductStatus(Number(id), status as 'available' | 'stopped');
+         res.status(httpStatus.OK).json({ message: `상품 상태가 '${status}'로 변경되었습니다.` });
+      } catch (error) {
+         console.error('❌ 상품 상태 업데이트 실패:', error);
+         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: '상품 상태 업데이트 중 오류가 발생했습니다.',
+         });
+      }
+   }
+
+   /**
+    * 마이페이지 - 상품 삭제
+    * @route DELETE /product/:id
+    */
+   async deleteProduct(req: Request, res: Response): Promise<void> {
+      try {
+         const { id } = req.params;
+         console.log('마이페이지 - 상품 삭제 : ', id);
+         await ProductService.deleteProduct(Number(id));
+         res.status(httpStatus.OK).json({ message: '상품이 삭제되었습니다.' });
+      } catch (error) {
+         console.error('❌ 상품 삭제 실패:', error);
+         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: '상품 삭제 중 오류가 발생했습니다.',
+         });
+      }
+   }
 }
 
 export default new ProductController();

@@ -17,7 +17,7 @@ class Product extends Model {
    public favorite_cnt!: number; // 좋아요 수
    public seller_id!: number; // 판매자 ID (User 참조)
    public trade_loc!: string; // 거래 희망 장소
-   public trade_status!: string; // 거래 상태 (available, reserved, completed)
+   public trade_status!: 'available' | 'reserved' | 'completed' | 'stopped'; // 거래 상태 (판매중, 예약중, 판매완료, 판매중지 )
    public trade_complete_date?: Date; // 거래 완료 날짜 (선택적)
    public trade_method!: string; // 거래 방식 (e.g., 직거래, 택배 거래)
    public buyer_id?: number; // 구매자 ID (User 참조, 선택적)
@@ -89,7 +89,8 @@ Product.init(
          allowNull: false,
       },
       trade_status: {
-         type: DataTypes.STRING,
+         type: DataTypes.ENUM('available', 'reserved', 'completed', 'stopped'),
+         allowNull: false,
          defaultValue: 'available',
       },
       trade_complete_date: {

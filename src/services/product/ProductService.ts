@@ -56,6 +56,43 @@ class ProductService {
    async removeFavorite(userId: number, productId: number) {
       return await ProductRepository.removeFavorite(userId, productId);
    }
+
+   /**
+    * 해당 회원의 전체 상품 조회
+    */
+   async getUserProducts(userId: number) {
+      const products = await ProductRepository.findUserProducts(userId);
+      return products.map((product) => product.toJSON());
+   }
+
+   /**
+    * 해당 회원의 상태별 상품 조회
+    */
+   async getUserProductsByStatus(userId: number, status: string) {
+      const products = await ProductRepository.findUserProductsByStatus(userId, status);
+      return products.map((product) => product.toJSON());
+   }
+
+   async updateProductStatus(productId: number, status: 'available' | 'stopped'): Promise<void> {
+      try {
+         const product = await ProductRepository.findProductById(productId);
+         if (!product) {
+            throw new Error('상품을 찾을 수 없습니다.');
+         }
+
+         await ProductRepository.updateProductStatus(productId, status);
+      } catch (error) {
+         console.error('❌ 상품 상태 업데이트 실패:', error);
+         throw new Error('상품 상태 업데이트 중 오류가 발생했습니다.');
+      }
+   }
+
+   /**
+    * 상품 삭제
+    */
+   async deleteProduct(productId: number): Promise<void> {
+      await ProductRepository.deleteProduct(productId);
+   }
 }
 
 export default new ProductService();
