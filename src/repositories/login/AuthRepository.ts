@@ -51,7 +51,7 @@ export const sendNewPassword = async (email: string): Promise<{ user: User; newP
 
       const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-      await user.update({ password: hashedPassword });
+      await user.update({ password: hashedPassword, password_reset: true });
       return { user, newPassword };
    } catch (error) {
       console.error('❌ 비밀번호 초기화 실패:', error);

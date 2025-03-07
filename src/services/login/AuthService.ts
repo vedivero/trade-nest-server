@@ -96,7 +96,16 @@ export const handleEmailLogin = async ({ email, password }: { email: string; pas
 
    const token = generateTokens(user);
 
-   return { token, user: { id: user.id, user_id: user.user_id, email: user.email, nickname: user.nickname } };
+   return {
+      token,
+      user: {
+         id: user.id,
+         user_id: user.user_id,
+         email: user.email,
+         nickname: user.nickname,
+         password_reset: user.password_reset,
+      },
+   };
 };
 
 export const checkUserForResetPassword = async ({ email }: { email: string }) => {

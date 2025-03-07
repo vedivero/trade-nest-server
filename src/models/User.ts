@@ -16,6 +16,7 @@ class User extends Model {
    public verified!: boolean;
    public emailToken!: string;
    public location!: string;
+   public password_reset!: boolean;
 }
 
 User.init(
@@ -77,6 +78,11 @@ User.init(
       },
       location: {
          type: DataTypes.STRING,
+      },
+      password_reset: {
+         type: DataTypes.BOOLEAN,
+         defaultValue: false,
+         allowNull: false,
       },
    },
    {

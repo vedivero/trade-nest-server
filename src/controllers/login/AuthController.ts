@@ -106,6 +106,7 @@ export const emailLogin = async (req: Request, res: Response): Promise<void> => 
          user_id: user.user_id,
          email: user.email,
          nickname: user.nickname,
+         password_reset: user.password_reset,
       };
 
       res.cookie('accessToken', token, {
@@ -121,7 +122,6 @@ export const emailLogin = async (req: Request, res: Response): Promise<void> => 
       });
 
       console.log('✅ 로그인 성공:', filteredUser);
-
       res.status(httpStatus.OK).json({
          message: '로그인 성공',
          status: 'success',
@@ -153,8 +153,7 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
 export const resetPassword = async (req: Request, res: Response): Promise<void> => {
    try {
       const { email } = req.body;
-
-      checkUserForResetPassword({ email });
+      await checkUserForResetPassword({ email });
       res.status(httpStatus.OK).json({ message: '비밀번호 초기화 완료' });
    } catch (error) {
       console.error('❌ 로그아웃 중 오류 발생:', error);

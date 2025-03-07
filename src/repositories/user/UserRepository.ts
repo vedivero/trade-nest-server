@@ -13,11 +13,29 @@ class UserRepository {
       }
    }
 
-   async updateUserInfo(userId: number, password: string | undefined, location: string): Promise<void> {
+   /**
+    * 회원 정보 업데이트
+    * @param userId 사용자 ID
+    * @param password 암호화된 비밀번호 (선택적)
+    * @param location 업데이트할 위치 정보
+    * @param resetPassword 비밀번호 초기화 상태를 false로 변경할지 여부
+    */
+   async updateUserInfo(
+      userId: number,
+      password: string | undefined,
+      location: string,
+      password_reset?: boolean, // 선택적(optional)으로 변경
+   ): Promise<void> {
       try {
-         const updateData: { password?: string; location: string } = { location };
+         const updateData: { password?: string; location: string; password_reset?: boolean } = { location };
+
          if (password) {
             updateData.password = password;
+         }
+
+         // password_reset이 정의된 경우에만 업데이트 데이터에 추가
+         if (typeof password_reset === 'boolean') {
+            updateData.password_reset = password_reset;
          }
 
          await User.update(updateData, { where: { id: userId } });
