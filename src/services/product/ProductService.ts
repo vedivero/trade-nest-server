@@ -73,7 +73,10 @@ class ProductService {
       return products.map((product) => product.toJSON());
    }
 
-   async updateProductStatus(productId: number, status: 'available' | 'stopped'): Promise<void> {
+   /**
+    * 상품 상태 업데이트 (판매중, 판매중지, 삭제)
+    */
+   async updateProductStatus(productId: number, status: 'available' | 'stopped' | 'deleted'): Promise<void> {
       try {
          const product = await ProductRepository.findProductById(productId);
          if (!product) {
@@ -85,13 +88,6 @@ class ProductService {
          console.error('❌ 상품 상태 업데이트 실패:', error);
          throw new Error('상품 상태 업데이트 중 오류가 발생했습니다.');
       }
-   }
-
-   /**
-    * 상품 삭제
-    */
-   async deleteProduct(productId: number): Promise<void> {
-      await ProductRepository.deleteProduct(productId);
    }
 }
 
