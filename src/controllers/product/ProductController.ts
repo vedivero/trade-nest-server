@@ -158,7 +158,7 @@ class ProductController {
    }
 
    /**
-    * 상품 상태 업데이트 (판매중 / 판매중지)
+    * 상품 상태 업데이트 (판매중 / 판매중지 / 삭제)
     * @route PATCH /product/mypage/product/:id/status
     */
    async updateProductStatus(req: Request, res: Response): Promise<void> {
@@ -167,38 +167,27 @@ class ProductController {
          const { status } = req.body;
 
          // 상태 값 검증
-         const allowedStatuses = ['available', 'stopped'];
+         const allowedStatuses = ['available', 'stopped', 'deleted'];
          if (!allowedStatuses.includes(status)) {
-            res.status(httpStatus.BAD_REQUEST).json({
-               message: `잘못된 상태값입니다. (${allowedStatuses.join(', ')} 중 하나여야 합니다.)`,
-            });
+            if (!res.headersSent) {
+               res.status(httpStatus.BAD_REQUEST).json({
+                  message: `잘못된 상태값입니다. (${allowedStatuses.join(', ')} 중 하나여야 합니다.)`,
+               });
+            }
          }
 
-         await ProductService.updateProductStatus(Number(id), status as 'available' | 'stopped');
-         res.status(httpStatus.OK).json({ message: `상품 상태가 '${status}'로 변경되었습니다.` });
+         await ProductService.updateProductStatus(Number(id), status as 'available' | 'stopped' | 'deleted');
+
+         if (!res.headersSent) {
+            res.status(httpStatus.OK).json({ message: `상품 상태가 '${status}'로 변경되었습니다.` });
+         }
       } catch (error) {
          console.error('❌ 상품 상태 업데이트 실패:', error);
-         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-            message: '상품 상태 업데이트 중 오류가 발생했습니다.',
-         });
-      }
-   }
-
-   /**
-    * 마이페이지 - 상품 삭제
-    * @route DELETE /product/:id
-    */
-   async deleteProduct(req: Request, res: Response): Promise<void> {
-      try {
-         const { id } = req.params;
-         console.log('마이페이지 - 상품 삭제 : ', id);
-         await ProductService.deleteProduct(Number(id));
-         res.status(httpStatus.OK).json({ message: '상품이 삭제되었습니다.' });
-      } catch (error) {
-         console.error('❌ 상품 삭제 실패:', error);
-         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-            message: '상품 삭제 중 오류가 발생했습니다.',
-         });
+         if (!res.headersSent) {
+            res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+               message: '상품 상태 업데이트 중 오류가 발생했습니다.',
+            });
+         }
       }
    }
 }
