@@ -22,7 +22,10 @@ class UserController {
       try {
          const { password, location } = req.body;
          const userId = (req.user as JwtPayload & { id: number })?.id;
-         await UserService.updateUserInfo(userId, password, location);
+
+         const password_reset = req.body.password_reset === true;
+
+         await UserService.updateUserInfo(userId, password, location, password_reset);
          res.status(httpStatus.OK).json({ message: '회원정보 업데이트 성공' });
       } catch (error) {
          console.error('회원 정보 업데이트 실패 : ', error);
