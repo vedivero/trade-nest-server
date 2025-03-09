@@ -33,7 +33,6 @@ class UserRepository {
             updateData.password = password;
          }
 
-         // password_reset이 정의된 경우에만 업데이트 데이터에 추가
          if (typeof password_reset === 'boolean') {
             updateData.password_reset = password_reset;
          }

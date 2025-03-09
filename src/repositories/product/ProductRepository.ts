@@ -6,10 +6,13 @@ class ProductRepository {
    /**
     * 모든 상품 조회
     */
-   async findAllProducts(): Promise<Product[]> {
+   async findAllProducts(userId: number | null): Promise<Product[]> {
       try {
+         const whereClause = userId ? { seller_id: { [Op.ne]: userId } } : {};
          return await Product.findAll({
+            where: whereClause,
             order: [['product_reg_date', 'DESC']],
+            logging: console.log,
          });
       } catch (error) {
          console.error('❌ 오류 발생 - 상품 조회:', error);
