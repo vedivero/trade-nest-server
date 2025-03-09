@@ -12,7 +12,7 @@ class ProductController {
    async getProducts(req: Request, res: Response): Promise<void> {
       try {
          const userId = (req.user as JwtPayload & { id: number })?.id;
-         const products = await ProductService.getProducts();
+         const products = await ProductService.getProducts(userId);
          const favoritedProducts = userId ? await ProductService.getFavoritedProducts(userId) : [];
          res.status(httpStatus.OK).json({ products, favoritedProducts });
       } catch (error) {

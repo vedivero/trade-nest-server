@@ -5,8 +5,8 @@ class ProductService {
    /**
     * 상품 목록 조회
     */
-   async getProducts() {
-      const products = await ProductRepository.findAllProducts();
+   async getProducts(userId: number | null) {
+      const products = await ProductRepository.findAllProducts(userId);
       return products.map((products) => products.toJSON());
    }
 
